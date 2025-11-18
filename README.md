@@ -52,7 +52,6 @@
 
 
 **作成期間**: 11.15 ~ 11.18 (約19時間)
-(上記の期間と時間を必ず記載してください。)
 
 ---
 ![https://github.com/shuunnichi/react-todo-app/blob/main/1---.png](https://github.com/shuunnichi/react-todo-app/blob/main/1---.png)
