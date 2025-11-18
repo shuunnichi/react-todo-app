@@ -1,5 +1,4 @@
-## Quick Pin & Click Todo
-
+## Simple Click Todo
 
 **GitHub Pages URL**: `https://shuunnichi.github.io/react-todo-app/`
 
@@ -56,4 +55,6 @@
 (上記の期間と時間を必ず記載してください。)
 
 ---
-*(ここに、アプリの機能やUI/UXを示すスクリーンショットを3枚以上挿入することが強く推奨されます。)*
+[https://github.com/shuunnichi/react-todo-app/blob/main/1---.png]
+[https://github.com/shuunnichi/react-todo-app/blob/main/2---.png]
+[https://github.com/shuunnichi/react-todo-app/blob/main/3---.png]
