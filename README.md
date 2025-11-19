@@ -55,7 +55,8 @@
 
 ---
 
-<img src="[./images/logo.png](https://github.com/shuunnichi/react-todo-app/blob/main/1---.png)" width="300">
+<img src="https://github.com/shuunnichi/react-todo-app/blob/main/1---.png" width="300">
+
 
 ![https://github.com/shuunnichi/react-todo-app/blob/main/1---.png](https://github.com/shuunnichi/react-todo-app/blob/main/1---.png)
 ![https://github.com/shuunnichi/react-todo-app/blob/main/2---.png](https://github.com/shuunnichi/react-todo-app/blob/main/2---.png)
