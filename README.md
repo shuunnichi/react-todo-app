@@ -54,6 +54,9 @@
 **作成期間**: 11.15 ~ 11.18 (約19時間)
 
 ---
+
+<img src="[./images/logo.png](https://github.com/shuunnichi/react-todo-app/blob/main/1---.png)" width="300">
+
 ![https://github.com/shuunnichi/react-todo-app/blob/main/1---.png](https://github.com/shuunnichi/react-todo-app/blob/main/1---.png)
 ![https://github.com/shuunnichi/react-todo-app/blob/main/2---.png](https://github.com/shuunnichi/react-todo-app/blob/main/2---.png)
 ![https://github.com/shuunnichi/react-todo-app/blob/main/3---.png](https://github.com/shuunnichi/react-todo-app/blob/main/3---.png)
