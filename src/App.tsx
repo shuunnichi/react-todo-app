@@ -1,19 +1,13 @@
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 
-// Quick Pin & Click Todo
-// Single-file React component (default export). Designed to be dropped into a CRA/Vite project as App.jsx.
-
 export default function QuickPinClickTodo() {
-  // --- Helpers ---
   const todayISO = () => new Date().toISOString().slice(0, 10);
   const formatISO = (d) => d?.slice(0, 10) ?? null;
   const nowISOTime = () => new Date().toISOString();
 
-  // --- Storage keys ---
   const STORAGE_TASKS = "tasks";
   const STORAGE_PINS = "pins";
 
-  // --- State ---
   const [tasks, setTasks] = useState(() => {
     try {
       const raw = localStorage.getItem(STORAGE_TASKS);
@@ -34,11 +28,10 @@ export default function QuickPinClickTodo() {
     }
   });
 
-  // selectedDate: string YYYY-MM-DD or null meaning "no date"
   const [selectedDate, setSelectedDate] = useState(null);
   const [inputTitle, setInputTitle] = useState("");
   const [editId, setEditId] = useState(null);
-  const [pendingDelete, setPendingDelete] = useState(null); // task id that is in deletion pending
+  const [pendingDelete, setPendingDelete] = useState(null); 
   
   const [showPinsAll, setShowPinsAll] = useState(false);
   const [overflowPinIndex, setOverflowPinIndex] = useState(Infinity);
@@ -46,16 +39,13 @@ export default function QuickPinClickTodo() {
   const [preEditState, setPreEditState] = useState({ title: "", date: null });
 
 
-  // Undo/Redo history
   const MAX_HISTORY = 50;
   const historyRef = useRef([]);
   const historyIndexRef = useRef(-1);
 
-  // For focusing input & pin area
   const inputRef = useRef(null);
   const pinAreaRef = useRef(null);
 
-  // Initialize - auto clean completed tasks older than yesterday
   useEffect(() => {
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
@@ -65,10 +55,8 @@ export default function QuickPinClickTodo() {
       saveState({ tasks: cleaned, pins }, true);
       setTasks(cleaned);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Persist to localStorage every time tasks or pins change
   useEffect(() => {
     localStorage.setItem(STORAGE_TASKS, JSON.stringify(tasks));
   }, [tasks]);
@@ -76,7 +64,6 @@ export default function QuickPinClickTodo() {
     localStorage.setItem(STORAGE_PINS, JSON.stringify(pins));
   }, [pins]);
 
-  // Save current full state into history (for undo/redo)
   function pushHistory(snapshot) {
     const h = historyRef.current;
     const idx = historyIndexRef.current;
@@ -92,7 +79,6 @@ export default function QuickPinClickTodo() {
     if (stateObj.pins) setPins(stateObj.pins);
   }
 
-  // Undo/Redo handlers
   useEffect(() => {
     const handler = (e) => {
       const isMac = navigator.platform.toUpperCase().indexOf("MAC") >= 0;
@@ -103,7 +89,6 @@ export default function QuickPinClickTodo() {
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function undo() {
@@ -122,7 +107,6 @@ export default function QuickPinClickTodo() {
     if (next) { setTasks(next.tasks); setPins(next.pins); }
   }
 
-  // Document click to cancel delete-pending
   useEffect(() => {
     const onDocClick = (e) => {
       if (!pendingDelete) return;
@@ -137,7 +121,6 @@ export default function QuickPinClickTodo() {
     return () => document.removeEventListener("click", onDocClick);
   }, [pendingDelete]);
 
-  // --- Task operations ---
   function addTaskFromInput() {
     if (!inputTitle.trim()) return flashInputError();
     const t = { id: Date.now(), title: inputTitle.trim(), isDone: false, dueDate: selectedDate, createdAt: nowISOTime(), completedAt: null };
@@ -190,7 +173,6 @@ export default function QuickPinClickTodo() {
     }
   }
 
-  // Pin operations
   function addPinFromInput() {
     const text = inputTitle.trim();
     if (!text || pins.includes(text)) return flashInputError();
@@ -208,14 +190,12 @@ export default function QuickPinClickTodo() {
     saveState({ pins: pins.filter((p) => p !== text) });
   }
 
-  // Input error visual
   const [inputErr, setInputErr] = useState(false);
   function flashInputError() {
     setInputErr(true);
     setTimeout(() => setInputErr(false), 1000);
   }
 
-  // --- Date selector: weekly view ---
   const [weekOffset, setWeekOffset] = useState(0);
 
   const weekDates = useMemo(() => {
@@ -229,10 +209,8 @@ export default function QuickPinClickTodo() {
       const iso = d.toISOString().slice(0, 10);
       return { iso, dayName: d.toLocaleDateString("ja-JP", { weekday: "short" }), md: `${d.getMonth() + 1}/${d.getDate()}`, isToday: iso === todayISO(), isSunday: d.getDay() === 0, isSaturday: d.getDay() === 6 };
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [weekOffset]);
 
-  // Custom date modal
   const [showDateModal, setShowDateModal] = useState(false);
   const [modalDate, setModalDate] = useState({ year: "", month: "", day: "" });
 
@@ -304,23 +282,19 @@ export default function QuickPinClickTodo() {
     return `その他 (${parseInt(month, 10)}月${parseInt(day, 10)}日)`;
   }, [selectedDate, weekDates]);
 
-  // UI derived lists
   const undoneTasks = tasks.filter((t) => !t.isDone).sort((a, b) => (a.dueDate || "9999").localeCompare(b.dueDate || "9999"));
   const doneTasks = tasks.filter((t) => t.isDone).sort((a, b) => (b.completedAt || "").localeCompare(a.completedAt || ""));
 
   return (
     <>
       <style>{`
-/* --- ベーススタイル --- */
 :root { --bg-color: #f5f5f5; --paper-bg-color: #ffffff; --text-color: #222; --subtext-color: #777; --border-color: #eaeaea; --button-bg-color: #e7e7e7; --button-hover-bg-color: #dcdcdc; --primary-color: #3F51B5; }
 *, *::before, *::after { box-sizing: border-box; }
 body { background: var(--bg-color); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; color: var(--text-color); margin: 0; padding: 60px 16px; line-height: 1.75; -webkit-font-smoothing: antialiased; }
-/* ▼ 修正点: max-widthを900pxに戻して広くします */
 .app-container { background: var(--paper-bg-color); padding: 40px 52px; max-width: 900px; margin: auto; border-radius: 16px; border: 1px solid var(--border-color); }
 h1, h2 { margin-top: 0; font-weight: 600; line-height: 1.4; }
 h1 { font-size: 28px; margin-bottom: 24px; text-align: left; }
 h2 { font-size: 18px; color: var(--subtext-color); font-weight: 500; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;}
-/* --- 入力エリア --- */
 .input-group { display: flex; gap: 0.5rem; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 16px; margin-bottom: 16px; }
 #new-todo-title { flex-grow: 1; border: none; background: none; font-size: 18px; padding: 8px 4px; outline: none; line-height: 1.5; color: var(--text-color); }
 #new-todo-title::placeholder { color: #bbb; }
@@ -329,7 +303,6 @@ h2 { font-size: 18px; color: var(--subtext-color); font-weight: 500; border-bott
 .action-button:hover { background: var(--button-bg-color); }
 #add-button { width: 50px; height: 50px; background-color: var(--primary-color); color: white; border-radius: 8px; }
 #add-button:hover { background-color: #303F9F; }
-/* --- 日付セレクター --- */
 .date-selector-wrapper { margin-top: 1.5rem; padding: 0; }
 .week-navigator { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
 .week-nav-button { background: none; border: none; font-size: 1.5rem; color: #999; cursor: pointer; transition: color 0.2s; padding: 0 0.5rem; }
@@ -345,14 +318,12 @@ h2 { font-size: 18px; color: var(--subtext-color); font-weight: 500; border-bott
 .day-name { font-weight: 500; font-size: 14px; }
 .date-num { font-size: 12px; opacity: 0.8; }
 .date-options { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.75rem; }
-/* --- ピン留めエリア --- */
 .pinned-list-area { display: flex; flex-wrap: wrap; gap: 0.75rem; padding: 1.5rem 0; border-bottom: 1px solid var(--border-color); margin-bottom: 1.5rem; }
 .pinned-item { display: inline-flex; align-items: center; background-color: var(--button-bg-color); color: var(--text-color); padding: 8px 16px; border-radius: 8px; font-size: 16px; cursor: pointer; transition: background-color 0.2s; max-width: 200px; }
 .pinned-item span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .pinned-item:hover { background-color: var(--button-hover-bg-color); }
 .pinned-item.hidden-pin { display: none; }
 .pin-toggle-button { background: none; border: none; color: var(--primary-color); cursor: pointer; font-size: 14px; font-weight: 500; padding: 8px; margin-top: 8px; width: 100%; text-align: center; order: 99; }
-/* --- タスクリスト --- */
 .task-section { margin-top: 16px; }
 .task-list { list-style: none; padding: 0; margin: 0; }
 .task-item { background-color: transparent; padding: 12px 8px; border-radius: 8px; margin-top: 4px; border: 1px solid transparent; cursor: pointer; transition: all 0.2s; display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
@@ -370,7 +341,6 @@ h2 { font-size: 18px; color: var(--subtext-color); font-weight: 500; border-bott
 .task-item:hover .edit-button { opacity: 1; }
 .edit-button:hover { background-color: var(--button-bg-color); }
 .empty-message { text-align: center; color: var(--subtext-color); padding: 2rem; }
-/* --- 日付入力モーダル --- */
 .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; z-index: 1000; }
 .date-input-modal { background: var(--paper-bg-color); padding: 40px 52px; border-radius: 16px; border: 1px solid var(--border-color); box-shadow: 0 10px 30px rgba(0,0,0,0.1); min-width: 320px; max-width: 90vw; }
 .modal-title { font-size: 1.25rem; font-weight: 600; margin-bottom: 1.5rem; text-align: center; }
